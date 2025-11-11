@@ -5,7 +5,10 @@ use x86_64::instructions::{port::Port, random::RdRand};
 
 /// Gather entropy from various sources to seed a RNG.
 pub fn build_rng() -> Hc128Rng {
+    #[cfg(target_arch = "x86_64")]
     const ENTROPY_SOURCES: [fn() -> [u8; 32]; 3] = [rd_rand_entropy, tsc_entropy, pit_entropy];
+    #[cfg(not(target_arch = "x86_64"))]
+    const ENTROPY_SOURCES: [fn() -> [u8; 32]; 2] = [tsc_entropy, pit_entropy];
 
     // Collect entropy from different sources and xor them all together.
     let mut seed = [0; 32];
@@ -42,6 +45,7 @@ fn rd_rand_entropy() -> [u8; 32] {
 /// Try to fetch a 64 bit random value with a retry count limit of 10.
 ///
 /// This function is a port of the C implementation provided in Intel's Software Developer's Manual, Volume 1, 7.3.17.1.
+#[cfg(target_arch = "x86_64")]
 fn get_random_64(rd_rand: RdRand) -> Option<u64> {
     const RETRY_LIMIT: u32 = 10;
     for _ in 0..RETRY_LIMIT {
