@@ -65,6 +65,7 @@ fn uefi_main() {
 #[cfg(not(docsrs_dummy_build))]
 #[cfg(feature = "uefi")]
 fn build_uefi_bootloader() -> PathBuf {
+    let target_arch = std::env::var("CARGO_CFG_TARGET_ARCH").unwrap();
     let out_dir = PathBuf::from(std::env::var("OUT_DIR").unwrap());
     let cargo = std::env::var("CARGO").unwrap_or_else(|_| "cargo".into());
     let mut cmd = Command::new(cargo);
@@ -78,7 +79,8 @@ fn build_uefi_bootloader() -> PathBuf {
         cmd.arg("--version").arg(BOOTLOADER_VERSION);
     }
     cmd.arg("--locked");
-    cmd.arg("--target").arg("x86_64-unknown-uefi");
+    cmd.arg("--target")
+        .arg(format!("{}-unknown-uefi", target_arch));
     cmd.arg("-Zbuild-std=core")
         .arg("-Zbuild-std-features=compiler-builtins-mem");
     cmd.arg("--root").arg(&out_dir);
