@@ -1,0 +1,8 @@
+[package]
+name = "paging"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+aarch64 = "0.0.14"
+x86_64 = "0.15.2"

@@ -11,6 +11,7 @@ edition = "2021"
 members = [
     "api",
     "common",
+    "common/paging",
     "common/config",
     "uefi",
     "bios/boot_sector",
